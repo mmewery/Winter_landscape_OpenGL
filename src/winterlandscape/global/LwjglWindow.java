@@ -16,8 +16,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class LwjglWindow {
 
-	public static int WIDTH = 600;
-    public static int HEIGHT = 400;
+	public static int WIDTH = 1800;
+    public static int HEIGHT = 1200;
 
     // The window handle
 	private long window;
@@ -71,7 +71,7 @@ public class LwjglWindow {
 	}
 
 	private void init() {
-		// Setup an error callback. The default implementation
+		// Set up an error callback. The default implementation
 		// will print the error message in System.err.
 		GLFWErrorCallback.createPrint(System.err).set();
 
@@ -91,7 +91,7 @@ public class LwjglWindow {
 		if (window == NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
 
-		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
+		// Set up a key callback. It will be called every time a key is pressed, repeated or released.
 		glfwSetKeyCallback(window, renderer.getGlfwKeyCallback());
 		glfwSetWindowSizeCallback(window, renderer.getGlfwWindowSizeCallback());
 		glfwSetMouseButtonCallback(window, renderer.getGlfwMouseButtonCallback());

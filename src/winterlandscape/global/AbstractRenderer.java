@@ -28,8 +28,8 @@ public abstract class AbstractRenderer {
     }
 
     public AbstractRenderer() {
-        this.width = 600;
-        this.height = 400;
+        this.width = 1800;
+        this.height = 1200;
     }
 
     public void init() {
@@ -119,7 +119,7 @@ public abstract class AbstractRenderer {
     protected GLFWCursorPosCallback glfwCursorPosCallback = new GLFWCursorPosCallback() {
         @Override
         public void invoke(long window, double x, double y) {
-            System.out.println("Cursor position [" + x + ", " + y + "]");
+
         }
     };
 
