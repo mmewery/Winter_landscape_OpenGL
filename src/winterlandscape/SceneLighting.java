@@ -22,10 +22,11 @@ public class SceneLighting {
     private float intensity = 1.0f;
 
     public void init() {
-        // TODO: glEnable(GL_LIGHTING), glEnable(GL_LIGHT0)
-        // TODO: Set initial light parameters
-        // TODO: Set winterlandscape.global ambient
-        // TODO: Enable color material if needed
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        glEnable(GL_COLOR_MATERIAL);
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        glEnable(GL_NORMALIZE);
     }
 
     public void apply() {

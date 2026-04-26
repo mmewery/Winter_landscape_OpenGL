@@ -22,7 +22,7 @@ public class TerrainPlane {
 
     public void init() {
         try {
-            snowTexture = new OGLTexture2D("textures/snow_negative_y.jpg");
+            snowTexture = new OGLTexture2D("textures/snow.jpg");
 
         } catch (IOException e) {
             System.err.println("Error loading textures: "+e.getMessage());
@@ -33,6 +33,9 @@ public class TerrainPlane {
 
         glEnable(GL_TEXTURE_2D);
         snowTexture.bind();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glColor3f(1, 1, 1);
 
         glBegin(GL_QUADS);
 

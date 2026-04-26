@@ -4,6 +4,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWScrollCallback;
 import transforms.Vec3D;
 import winterlandscape.TerrainPlane;
 
@@ -34,7 +35,6 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
 
     private float trans, deltaTrans = 0;
 
-    private float uhel = 0;
 
     private boolean mouseButton1 = false;
     private boolean per = true, move = false;
@@ -53,11 +53,12 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         camera.setFirstPerson(true);
         camera.setPosition(new Vec3D(10));
 
+
         terrain = new TerrainPlane();
         terrain.init();
 
         // TODO: Create scene entities
-        // TODO: Setup lighting
+
     }
 
     @Override
@@ -135,6 +136,13 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
             }
         };
 
+        glfwScrollCallback = new GLFWScrollCallback() {
+            @Override
+            public void invoke(long window, double dx, double dy) {
+                camera.forward(dy * 2);
+            }
+        };
+
         glfwKeyCallback = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
@@ -148,15 +156,6 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
 
                 if (action == GLFW_PRESS) {
                     switch (key) {
-                        case GLFW_KEY_P:
-                            per = !per;
-                            break;
-                        case GLFW_KEY_M:
-                            move = !move;
-                            break;
-                        case GLFW_KEY_K:
-                            sky = (sky + 1) % 3;
-                            break;
                         case GLFW_KEY_W:
                         case GLFW_KEY_S:
                         case GLFW_KEY_A:
