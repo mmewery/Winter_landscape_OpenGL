@@ -113,7 +113,4 @@ public class SnowParticleSystem {
 
     }
 
-    public int getActiveCount() {
-        return (int) particles.stream().filter(p -> p.active).count();
-    }
 }
