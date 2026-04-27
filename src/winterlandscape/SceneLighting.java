@@ -30,10 +30,12 @@ public class SceneLighting {
     }
 
     public void apply() {
-        // TODO: glLightfv(GL_LIGHT0, GL_POSITION, ...)
-        // TODO: glLightfv(GL_LIGHT0, GL_AMBIENT, ...)
-        // TODO: glLightfv(GL_LIGHT0, GL_DIFFUSE, ...)
-        // TODO: glLightfv(GL_LIGHT0, GL_SPECULAR, ...)
+        glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+        glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseColor);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);
+
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, new float[]{0.05f, 0.05f, 0.15f, 1f});
     }
 
     // Setters for GUI control

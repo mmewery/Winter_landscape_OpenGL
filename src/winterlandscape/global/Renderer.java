@@ -6,6 +6,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 import transforms.Vec3D;
+import winterlandscape.SceneLighting;
+import winterlandscape.SnowParticleSystem;
 import winterlandscape.TerrainPlane;
 
 import java.nio.DoubleBuffer;
@@ -24,11 +26,15 @@ import static org.lwjgl.opengl.GL11.*;
 public class Renderer extends winterlandscape.global.AbstractRenderer {
 
     private GLCamera camera;
+    private SceneLighting lighting;
 
     private TerrainPlane terrain;
+    private SnowParticleSystem snow;
+
     // TODO: Scene entities (House, SnowParticleSystem, SkyBox)
-    // TODO: Lighting parameters
     // TODO: Wind vector
+
+    float deltaTime = 0;
 
     private float dx, dy, ox, oy;
     private float zenit, azimut;
@@ -53,9 +59,14 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         camera.setFirstPerson(true);
         camera.setPosition(new Vec3D(10));
 
+        lighting = new SceneLighting();
+        lighting.init();
+
 
         terrain = new TerrainPlane();
         terrain.init();
+
+        snow = new SnowParticleSystem();
 
         // TODO: Create scene entities
 
@@ -67,6 +78,8 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
 
         trans += deltaTrans;
 
+        deltaTime++;
+
         glViewport(0, 0, width, height);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -76,12 +89,14 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         glLoadIdentity();
         camera.setMatrix();
 
+        lighting.apply();
+
         terrain.render();
 
-
+        snow.update(deltaTime);
+        snow.render();
 
         // TODO: Render scene entities (house, snow, skybox)
-        // TODO: Update particle system
         // TODO: Render HUD / GUI overlay
         // TODO: Handle continuous key input (WASD movement)
     }
