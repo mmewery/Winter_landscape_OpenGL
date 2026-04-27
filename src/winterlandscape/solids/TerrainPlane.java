@@ -1,4 +1,4 @@
-package winterlandscape;
+package winterlandscape.solids;
 
 import lwjglutils.OGLTexture2D;
 

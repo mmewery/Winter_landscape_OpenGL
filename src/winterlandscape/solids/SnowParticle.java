@@ -1,6 +1,7 @@
-package winterlandscape;
+package winterlandscape.solids;
 
 import transforms.Vec3D;
+import winterlandscape.SnowParticleSystem;
 
 /**
  * Represents a single snow particle in the particle system.

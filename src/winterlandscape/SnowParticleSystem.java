@@ -1,6 +1,7 @@
 package winterlandscape;
 
 import transforms.Vec3D;
+import winterlandscape.solids.SnowParticle;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,6 +7,9 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 import transforms.Vec3D;
 import winterlandscape.*;
+import winterlandscape.solids.House;
+import winterlandscape.solids.SkyBox;
+import winterlandscape.solids.TerrainPlane;
 
 import java.nio.DoubleBuffer;
 
