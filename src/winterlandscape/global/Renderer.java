@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 import transforms.Vec3D;
+import winterlandscape.House;
 import winterlandscape.SceneLighting;
 import winterlandscape.SnowParticleSystem;
 import winterlandscape.TerrainPlane;
@@ -30,8 +31,9 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
 
     private TerrainPlane terrain;
     private SnowParticleSystem snow;
+    private House house;
 
-    // TODO: Scene entities (House, SnowParticleSystem, SkyBox)
+    // TODO: Scene entities (kyBox)
     // TODO: Wind vector
 
     float deltaTime = 0;
@@ -67,6 +69,9 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         terrain.init();
 
         snow = new SnowParticleSystem();
+        snow.init();
+
+        house = new House();
 
         // TODO: Create scene entities
 
@@ -92,6 +97,8 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         lighting.apply();
 
         terrain.render();
+
+        house.render();
 
         snow.update(deltaTime);
         snow.render();

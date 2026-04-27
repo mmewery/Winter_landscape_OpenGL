@@ -1,14 +1,14 @@
 package winterlandscape;
 
-/**
- * 3D house model built from geometric primitives using push/pop matrix.
- *
- * Uses glPushMatrix/glPopMatrix for hierarchical scene graph composition.
- * Components: walls, gabled roof, door, windows, chimney.
- */
+import static org.lwjgl.opengl.GL11.*;
+import static winterlandscape.global.GlutUtils.*;
+
 public class House {
 
     public void render() {
+
+        glEnable(GL_LIGHTING);
+        drawWalls();
         // TODO: Enable lighting, disable textures (or apply textures)
         // TODO: glPushMatrix
         //   TODO: drawWalls()
@@ -19,6 +19,13 @@ public class House {
         // TODO: glPopMatrix
     }
 
+    private void drawWalls(){
+        glPushMatrix();
+        glTranslatef(0,2.5f, 0);
+        glColor3f(0.85f, 0.75f, 0.6f);
+        glutSolidCube(5);
+        glPopMatrix();
+    }
     // TODO: private void drawWalls() — scaled glutSolidCube or quads
     // TODO: private void drawRoof() — triangular prism or scaled cube
     // TODO: private void drawDoor() — colored quad

@@ -13,12 +13,12 @@ public class SnowParticleSystem {
     private final List<SnowParticle> particles = new ArrayList<>();
     private final Random random = new Random();
 
-    private int maxParticles = 100000;
+    private int maxParticles = 1000000;
     private Vec3D gravity = new Vec3D(0, -0.0005, 0);
     private Vec3D wind = new Vec3D(0, 0, 0);
 
-    private float spawnAreaSize = 10f;
-    private float spawnHeight = 30f;
+    private final float spawnAreaSize = 20f;
+    private final float spawnHeight = 30f;
 
     private void spawnParticle() {
         float x =  random.nextFloat(-spawnAreaSize, spawnAreaSize);
@@ -45,6 +45,12 @@ public class SnowParticleSystem {
         return wind;
     }
 
+    public void init(){
+        for(int i = 0; i < 100; i++){
+            spawnParticle();
+        }
+    }
+
     public void update(float deltaTime) {
 
         if(particles.size() < maxParticles) {
@@ -53,13 +59,18 @@ public class SnowParticleSystem {
         for(SnowParticle particle:particles){
             //particle.velocity = particle.velocity.add(gravity);
             particle.position = particle.position.add(particle.velocity);
-            particle.lifetime += deltaTime;
+            particle.lifetime += 5;
 
-            if(particle.position.getY() <= 0){
+            if(particle.position.getY() <= 0.1 ||
+                    (particle.position.getY() <= 5.1f &&
+                            particle.position.getX() <= 2.5f && particle.position.getX() >= -2.5f &&
+            particle.position.getZ() <= 2.5f && particle.position.getZ() >= -2.5f
+
+            )) {
                 particle.velocity = new Vec3D(0, 0, 0);
             }
 
-            if (particle.lifetime >= 300000) {
+            if (particle.lifetime >= 18000) {
                 deleteParticle(particle);
             }
         }
@@ -78,8 +89,8 @@ public class SnowParticleSystem {
     }
 
     public void render() {
-        glDisable(GL_LIGHTING);
 
+        glDisable(GL_LIGHTING);
         glColor3f(1, 1, 1);
         glPointSize(5);
         glBegin(GL_POINTS);
@@ -87,8 +98,9 @@ public class SnowParticleSystem {
             glVertex3d(particle.position.getX(), particle.position.getY(), particle.position.getZ());
         }
         glEnd();
-
         glEnable(GL_LIGHTING);
+
+
     }
 
     public int getActiveCount() {

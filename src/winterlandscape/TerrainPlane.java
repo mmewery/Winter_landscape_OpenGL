@@ -6,15 +6,9 @@ import java.io.IOException;
 
 import static org.lwjgl.opengl.GL11.*;
 
-/**
- * Flat snowy terrain plane at Y=0.
- *
- * Large textured quad representing the snow-covered ground.
- * Uses tiled snow texture and proper surface normals for lighting.
- */
 public class TerrainPlane {
 
-    private static final float SIZE = 10f;
+    private static final float SIZE = 20f;
     private static final float Y = 0f;
     private static final float TILE_COUNT = 10f;
 
@@ -51,7 +45,4 @@ public class TerrainPlane {
 
     }
 
-    public void dispose() {
-        // TODO: Clean up texture resources if needed
-    }
 }
