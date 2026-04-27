@@ -1,30 +1,42 @@
 package winterlandscape;
 
+import lwjglutils.OGLTexture2D;
+
+import java.io.IOException;
+
 import static org.lwjgl.opengl.GL11.*;
 import static winterlandscape.global.GlutUtils.*;
 
 public class House {
 
+    private OGLTexture2D texture;
+
     public void render() {
 
         glEnable(GL_LIGHTING);
         drawWalls();
-        // TODO: Enable lighting, disable textures (or apply textures)
-        // TODO: glPushMatrix
-        //   TODO: drawWalls()
-        //   TODO: drawRoof()
-        //   TODO: drawDoor()
-        //   TODO: drawWindows()
-        //   TODO: drawChimney() (optional)
-        // TODO: glPopMatrix
+
+    }
+    public void init(){
+
+        try {
+            texture = new OGLTexture2D("textures/wood.jpg");
+
+        } catch (IOException e) {
+            System.err.println("Error loading textures: "+e.getMessage());
+        }
+
     }
 
     private void drawWalls(){
         glPushMatrix();
+        glEnable(GL_TEXTURE_2D);
         glTranslatef(0,2.5f, 0);
         glColor3f(0.85f, 0.75f, 0.6f);
+        texture.bind();
         glutSolidCube(5);
         glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
     }
     // TODO: private void drawWalls() — scaled glutSolidCube or quads
     // TODO: private void drawRoof() — triangular prism or scaled cube

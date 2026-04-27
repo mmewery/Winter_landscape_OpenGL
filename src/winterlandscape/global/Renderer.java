@@ -15,12 +15,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.opengl.GL11.*;
 
-/**
- * Main renderer for the Interactive 3D Winter Landscape.
- *
- * Orchestrates scene entities: terrain, house, snow particles, skybox, lighting, and GUI.
- * Controls: [LMB+drag] look | [WASD] move | [+/-] snow | [arrows] wind | [L] light | [ESC] quit
- */
+
 public class Renderer extends winterlandscape.global.AbstractRenderer {
 
     private GLCamera camera;
@@ -71,6 +66,7 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         //snow.init();
 
         house = new House();
+        house.init();
 
 
     }
@@ -106,10 +102,6 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         // TODO: Render HUD / GUI overlay
     }
 
-    // TODO: Override glfwKeyCallback for keyboard controls
-    // TODO: Override glfwMouseButtonCallback for mouse look
-    // TODO: Override glfwCursorPosCallback for camera rotation
-    // TODO: Override glfwScrollCallback for zoom
 
     public Renderer(){
         super();
