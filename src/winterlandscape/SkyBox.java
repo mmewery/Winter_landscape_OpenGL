@@ -6,31 +6,114 @@ import java.io.IOException;
 
 import static org.lwjgl.opengl.GL11.*;
 
-/**
- * Skybox for the winter scene.
- *
- * Renders a textured cube around the camera to create the illusion of
- * a distant winter sky/mountains environment.
- * Uses snow_*.jpg cubemap textures from res/textures/.
- */
+
 public class SkyBox {
 
-    private OGLTexture2D[] faces; // 6 faces: +x, -x, +y, -y, +z, -z
+    private OGLTexture2D[] faces; //+x, -x, +y, -y, +z, -z
 
     public void init() {
-        // TODO: Load 6 skybox face textures:
-        //   snow_positive_x.jpg, snow_negative_x.jpg,
-        //   snow_positive_y.jpg, snow_negative_y.jpg,
-        //   snow_positive_z.jpg, snow_negative_z.jpg
+        faces = new OGLTexture2D[6];
+        try {
+            faces[0] = new OGLTexture2D("textures/posx.jpg");
+            faces[1] = new OGLTexture2D("textures/negx.jpg");
+            faces[2] = new OGLTexture2D("textures/posy.jpg");
+            faces[3] = new OGLTexture2D("textures/negy.jpg");
+            faces[4] = new OGLTexture2D("textures/posz.jpg");
+            faces[5] = new OGLTexture2D("textures/negz.jpg");
+
+        } catch (IOException e) {
+            System.err.println("Error loading textures: "+e.getMessage());
+        }
     }
 
     public void render(double eyeX, double eyeY, double eyeZ) {
-        // TODO: Disable lighting, depth write
-        // TODO: glPushMatrix
-        //   TODO: Translate to camera position
-        //   TODO: Draw 6 textured quads forming a cube
-        // TODO: glPopMatrix
-        // TODO: Re-enable depth write, lighting
+        glDisable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+
+        glPushMatrix();
+        glTranslated(eyeX, eyeY, eyeZ);
+
+        double size = 200;
+
+        faces[1].bind(); //-x  (left)
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3d(-size, -size, -size);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3d(-size, size, -size);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3d(-size, size, size);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3d(-size, -size, size);
+        glEnd();
+
+        faces[0].bind();//+x  (right)
+        glBegin(GL_QUADS);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3d(size, -size, -size);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3d(size, -size, size);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3d(size, size, size);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3d(size, size, -size);
+        glEnd();
+
+        faces[3].bind(); //-y bottom
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3d(-size, -size, -size);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3d(size, -size, -size);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3d(size, -size, size);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3d(-size, -size, size);
+        glEnd();
+
+        faces[2].bind(); //+y  top
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3d(-size, size, -size);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3d(size, size, -size);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3d(size, size, size);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3d(-size, size, size);
+        glEnd();
+
+        faces[5].bind(); //-z
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3d(size, -size, -size);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3d(-size, -size, -size);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3d(-size, size, -size);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3d(size, size, -size);
+        glEnd();
+
+        faces[4].bind(); //+z
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3d(-size, size, size);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3d(-size, -size, size);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3d(size, -size, size);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3d(size, size, size);
+        glEnd();
+
+        glDisable(GL_TEXTURE_2D);
+        glPopMatrix();
+
+        glEnable(GL_LIGHTING);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
     }
 
     public void dispose() {

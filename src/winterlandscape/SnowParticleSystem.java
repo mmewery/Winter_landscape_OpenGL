@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL14.*;
 
 public class SnowParticleSystem {
 
@@ -14,7 +15,7 @@ public class SnowParticleSystem {
     private final Random random = new Random();
 
     private int maxParticles = 1000000;
-    private Vec3D gravity = new Vec3D(0, -0.0005, 0);
+    private Vec3D gravity = new Vec3D(0, -0.00005, 0);
     private Vec3D wind = new Vec3D(0, 0, 0);
 
     private final float spawnAreaSize = 20f;
@@ -45,11 +46,11 @@ public class SnowParticleSystem {
         return wind;
     }
 
-    public void init(){
-        for(int i = 0; i < 100; i++){
-            spawnParticle();
-        }
-    }
+//    public void init(){
+//        for(int i = 0; i < 1000; i++){
+//            spawnParticle();
+//        }
+//    }
 
     public void update(float deltaTime) {
 
@@ -57,20 +58,23 @@ public class SnowParticleSystem {
             spawnParticle();
         }
         for(SnowParticle particle:particles){
-            //particle.velocity = particle.velocity.add(gravity);
+            particle.velocity = particle.velocity.add(gravity);
             particle.position = particle.position.add(particle.velocity);
             particle.lifetime += 5;
 
-            if(particle.position.getY() <= 0.1 ||
-                    (particle.position.getY() <= 5.1f &&
-                            particle.position.getX() <= 2.5f && particle.position.getX() >= -2.5f &&
-            particle.position.getZ() <= 2.5f && particle.position.getZ() >= -2.5f
-
-            )) {
+            if (particle.position.getY() <= 5.1f && particle.position.getY() > 1.0f &&
+                particle.position.getX() <= 2.5f && particle.position.getX() >= -2.5f &&
+                particle.position.getZ() <= 2.5f && particle.position.getZ() >= -2.5f) {
+                
+                particle.position = particle.position.withY(5.1f);
+                particle.velocity = new Vec3D(0, 0, 0);
+                
+            } else if (particle.position.getY() <= 0.3f) {
+                particle.position = particle.position.withY(0.1f);
                 particle.velocity = new Vec3D(0, 0, 0);
             }
 
-            if (particle.lifetime >= 18000) {
+            if (particle.lifetime >= 30000) {
                 deleteParticle(particle);
             }
         }
@@ -91,8 +95,14 @@ public class SnowParticleSystem {
     public void render() {
 
         glDisable(GL_LIGHTING);
+        glEnable(GL_POINT_SMOOTH);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glColor3f(1, 1, 1);
-        glPointSize(5);
+        glPointSize(30);
+
+        float[] attenuation = {0f, 0.1f, 0.01f};
+        glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, attenuation);
         glBegin(GL_POINTS);
         for(SnowParticle particle:particles){
             glVertex3d(particle.position.getX(), particle.position.getY(), particle.position.getZ());
