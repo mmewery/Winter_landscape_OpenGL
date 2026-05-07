@@ -20,12 +20,11 @@ public class SnowParticleSystem {
     private Vec3D wind = new Vec3D(0, 0, 0);
 
     private final float spawnAreaSize = 20f;
-    private final float spawnHeight = 30f;
 
     private void spawnParticle() {
         float x =  random.nextFloat(-spawnAreaSize, spawnAreaSize);
         float z = random.nextFloat(-spawnAreaSize, spawnAreaSize);
-        float y = spawnHeight;
+        float y = 30.0f;
         float velocityY = random.nextFloat(-0.5f, -0.1f);
 
         particles.add(new SnowParticle(new Vec3D(x, y, z), new Vec3D(0, velocityY, 0), 5));
@@ -35,9 +34,6 @@ public class SnowParticleSystem {
         this.maxParticles = count;
     }
 
-    public int getMaxParticles() {
-        return maxParticles;
-    }
 
     public void setWind(Vec3D wind) {
         this.wind = wind;
@@ -47,13 +43,17 @@ public class SnowParticleSystem {
         return wind;
     }
 
+    public void setGravity(Vec3D gravity) {
+        this.gravity = gravity;
+    }
+
 //    public void init(){
 //        for(int i = 0; i < 1000; i++){
 //            spawnParticle();
 //        }
 //    }
 
-    public void update(float deltaTime) {
+    public void update() {
 
         if(particles.size() < maxParticles) {
             spawnParticle();
@@ -84,7 +84,7 @@ public class SnowParticleSystem {
     private void deleteParticle(SnowParticle particle) {
         float x =  random.nextFloat(-spawnAreaSize, spawnAreaSize);
         float z = random.nextFloat(-spawnAreaSize, spawnAreaSize);
-        float y = spawnHeight;
+        float y = 30.0f;
         float velocityY = random.nextFloat(-0.5f, -0.1f);
 
         particle.position = new Vec3D(x, y, z);

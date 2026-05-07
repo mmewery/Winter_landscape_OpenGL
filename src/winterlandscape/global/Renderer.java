@@ -11,6 +11,7 @@ import winterlandscape.solids.House;
 import winterlandscape.solids.SkyBox;
 import winterlandscape.solids.TerrainPlane;
 
+import javax.swing.*;
 import java.nio.DoubleBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -40,8 +41,6 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
 
 
     private boolean mouseButton1 = false;
-    private boolean per = true, move = false;
-    private int sky = 0;
 
     @Override
     public void init() {
@@ -71,6 +70,7 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         house = new House();
         house.init();
 
+        SwingUtilities.invokeLater(() -> new ControlPanel(snow, lighting));
 
     }
 
@@ -99,7 +99,7 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
 
         house.render();
 
-        snow.update(deltaTime);
+        snow.update();
         snow.render();
 
         // TODO: Render HUD / GUI overlay
@@ -185,7 +185,7 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
                         if (deltaTrans < 0.001f)
                             deltaTrans = 0.001f;
                         else
-                            deltaTrans *= 1.02;
+                            deltaTrans *= 1.02f;
                         break;
 
                     case GLFW_KEY_S:
@@ -193,7 +193,7 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
                         if (deltaTrans < 0.001f)
                             deltaTrans = 0.001f;
                         else
-                            deltaTrans *= 1.02;
+                            deltaTrans *= 1.02f;
                         break;
 
                     case GLFW_KEY_A:
@@ -201,7 +201,7 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
                         if (deltaTrans < 0.001f)
                             deltaTrans = 0.001f;
                         else
-                            deltaTrans *= 1.02;
+                            deltaTrans *= 1.02f;
                         break;
 
                     case GLFW_KEY_D:
@@ -209,7 +209,7 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
                         if (deltaTrans < 0.001f)
                             deltaTrans = 0.001f;
                         else
-                            deltaTrans *= 1.02;
+                            deltaTrans *= 1.02f;
                         break;
                 }
             }
