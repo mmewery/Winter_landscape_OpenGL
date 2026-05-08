@@ -26,6 +26,7 @@ public class ControlPanel extends JFrame {
 
         // Snow
         JPanel snowPanel = createSectionPanel("Snow");
+        //intensity
         JSlider intensitySlider = new JSlider(10, 5000, 1000);
         intensitySlider.setSnapToTicks(true);
         intensitySlider.setMajorTickSpacing(10);
@@ -37,6 +38,7 @@ public class ControlPanel extends JFrame {
         });
         snowPanel.add(createSliderRow("Intensity:", intensitySlider, intensityLabel));
 
+        //gravity
         JSlider gravitySlider = new JSlider(0, 100, 5);
         JLabel gravityLabel = new JLabel("  0.05");
         gravitySlider.addChangeListener(e -> {
@@ -63,7 +65,7 @@ public class ControlPanel extends JFrame {
         JLabel windXLabel = new JLabel("  0.00");
         windXSlider.addChangeListener(e -> {
             windXLabel.setText(String.format("  %.2f", windXSlider.getValue() / 100.0f));
-            snow.setWind(new Vec3D(windXSlider.getValue() / 10000.0, snow.getWind().getY(), snow.getWind().getZ()));
+            snow.setWind(new Vec3D(windXSlider.getValue() / 100.0, snow.getWind().getY(), snow.getWind().getZ()));
         });
         windPanel.add(createSliderRow("Wind X:", windXSlider, windXLabel));
 
@@ -71,7 +73,7 @@ public class ControlPanel extends JFrame {
         JLabel windZLabel = new JLabel("  0.00");
         windZSlider.addChangeListener(e -> {
             windZLabel.setText(String.format("  %.2f", windZSlider.getValue() / 100.0f));
-            snow.setWind(new Vec3D(snow.getWind().getX(), snow.getWind().getY(), windZSlider.getValue() / 10000.0));
+            snow.setWind(new Vec3D(snow.getWind().getX(), snow.getWind().getY(), windZSlider.getValue() / 100.0));
         });
         windPanel.add(createSliderRow("Wind Z:", windZSlider, windZLabel));
 

@@ -30,9 +30,6 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
     private House house;
 
     private SkyBox skyBox;
-    // TODO: Wind vector
-
-    float deltaTime = 0;
 
     private float dx, dy, ox, oy;
     private float zenit, azimut;
@@ -46,7 +43,6 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
     public void init() {
         super.init();
         glEnable(GL_DEPTH_TEST);
-
 
         glClearColor(0.05f, 0.05f, 0.15f, 1f);
         glShadeModel(GL_SMOOTH);
@@ -65,13 +61,11 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         terrain.init();
 
         snow = new SnowParticleSystem();
-        //snow.init();
 
         house = new House();
         house.init();
 
         SwingUtilities.invokeLater(() -> new ControlPanel(snow, lighting));
-
     }
 
     @Override
@@ -79,8 +73,6 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         trans += deltaTrans;
-
-        deltaTime++;
 
         glViewport(0, 0, width, height);
         glMatrixMode(GL_PROJECTION);
@@ -102,7 +94,12 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         snow.update();
         snow.render();
 
-        // TODO: Render HUD / GUI overlay
+        textRenderer.clear();
+        textRenderer.addStr2D(3, 20, "Snow: " + snow.getParticleCount() + " / " + snow.getMaxParticles());
+        textRenderer.addStr2D(3, 40, String.format("Wind: (%.4f, %.4f)", snow.getWind().getX(), snow.getWind().getZ()));
+        textRenderer.addStr2D(3, 60, String.format("Light: %.1f", lighting.getIntensity()));
+        textRenderer.addStr2D(3, height - 3, "WASD=move | Mouse=look | Scroll=zoom");
+        textRenderer.draw();
     }
 
 
