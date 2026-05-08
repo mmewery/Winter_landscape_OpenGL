@@ -20,7 +20,7 @@ public class SnowParticleSystem {
     private Vec3D wind = new Vec3D(0, 0, 0);
     private int maxLifetime = 30000;
 
-    private final float spawnAreaSize = 20f;
+    private final float spawnAreaSize = 30f;
 
     private void spawnParticle() {
         float x =  random.nextFloat(-spawnAreaSize, spawnAreaSize);
@@ -83,7 +83,11 @@ public class SnowParticleSystem {
             }
 
             particle.velocity = particle.velocity.add(gravity);
-            particle.position = particle.position.add(particle.velocity).add(wind);
+            if (particle.wallHit) {
+                particle.position = particle.position.add(particle.velocity);
+            } else {
+                particle.position = particle.position.add(particle.velocity).add(wind);
+            }
             particle.lifetime += 5;
 
             double px = particle.position.getX();
@@ -108,32 +112,28 @@ public class SnowParticleSystem {
             // wall collision
             if (py > 0 && py <= WALL_TOP) {
                 // Front
-                if (inXRange && pz <= WALL_HALF && pz >= WALL_HALF - 0.3 && particle.velocity.getZ() < 0) {
+                if (inXRange && pz <= WALL_HALF && pz >= WALL_HALF - 0.3) {
                     particle.position = particle.position.withZ(WALL_HALF + 0.05);
-                    particle.velocity = new Vec3D(0, 0, 0);
-                    particle.grounded = true;
-                    continue;
+                    particle.velocity = new Vec3D(0, particle.velocity.getY(), 0);
+                    particle.wallHit = true;
                 }
                 // Back
-                if (inXRange && pz >= -WALL_HALF && pz <= -WALL_HALF + 0.3 && particle.velocity.getZ() > 0) {
+                if (inXRange && pz >= -WALL_HALF && pz <= -WALL_HALF + 0.3) {
                     particle.position = particle.position.withZ(-WALL_HALF - 0.05);
-                    particle.velocity = new Vec3D(0, 0, 0);
-                    particle.grounded = true;
-                    continue;
+                    particle.velocity = new Vec3D(0, particle.velocity.getY(), 0);
+                    particle.wallHit = true;
                 }
                 // Right
-                if (inZRange && px <= WALL_HALF && px >= WALL_HALF - 0.3 && particle.velocity.getX() < 0) {
+                if (inZRange && px <= WALL_HALF && px >= WALL_HALF - 0.3) {
                     particle.position = particle.position.withX(WALL_HALF + 0.05);
-                    particle.velocity = new Vec3D(0, 0, 0);
-                    particle.grounded = true;
-                    continue;
+                    particle.velocity = new Vec3D(0, particle.velocity.getY(), 0);
+                    particle.wallHit = true;
                 }
                 // left
-                if (inZRange && px >= -WALL_HALF && px <= -WALL_HALF + 0.3 && particle.velocity.getX() > 0) {
+                if (inZRange && px >= -WALL_HALF && px <= -WALL_HALF + 0.3) {
                     particle.position = particle.position.withX(-WALL_HALF - 0.05);
-                    particle.velocity = new Vec3D(0, 0, 0);
-                    particle.grounded = true;
-                    continue;
+                    particle.velocity = new Vec3D(0, particle.velocity.getY(), 0);
+                    particle.wallHit = true;
                 }
             }
 
@@ -142,6 +142,10 @@ public class SnowParticleSystem {
                 particle.position = particle.position.withY(0.1);
                 particle.velocity = new Vec3D(0, 0, 0);
                 particle.grounded = true;
+            }
+
+            if(px >= spawnAreaSize-10 || px<= -spawnAreaSize+10 || pz >= spawnAreaSize-10 || pz<= -spawnAreaSize+10 ) {
+                deleteParticle(particle);
             }
 
             if (particle.lifetime >= maxLifetime) {
@@ -160,6 +164,7 @@ public class SnowParticleSystem {
         particle.lifetime = 0;
         particle.velocity = new Vec3D(0, velocityY, 0);
         particle.grounded = false;
+        particle.wallHit = false;
 
     }
 

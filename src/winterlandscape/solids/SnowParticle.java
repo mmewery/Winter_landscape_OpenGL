@@ -8,6 +8,7 @@ public class SnowParticle {
     public float size;
     public float lifetime;
     public boolean grounded;
+    public boolean wallHit;
 
     public SnowParticle() {
         this.position = new Vec3D();
