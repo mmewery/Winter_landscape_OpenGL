@@ -1,20 +1,13 @@
 package winterlandscape.solids;
 
 import transforms.Vec3D;
-import winterlandscape.SnowParticleSystem;
-
-/**
- * Represents a single snow particle in the particle system.
- *
- * Stores position, velocity, and active state.
- * Managed by {@link SnowParticleSystem} via a dynamic ArrayList.
- */
 public class SnowParticle {
 
     public Vec3D position;
     public Vec3D velocity;
     public float size;
     public float lifetime;
+    public boolean grounded;
 
     public SnowParticle() {
         this.position = new Vec3D();

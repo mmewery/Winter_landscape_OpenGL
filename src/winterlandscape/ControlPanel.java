@@ -26,48 +26,114 @@ public class ControlPanel extends JFrame {
 
         // Snow
         JPanel snowPanel = createSectionPanel("Snow");
-        snowPanel.add(createSliderRow("Intensity:", 0, 10000, 1000, 1.0f,
-                val -> snow.setMaxParticles(val)));
-        snowPanel.add(createSliderRow("Gravity:", 0, 100, 5, 100.0f,
-                val -> snow.setGravity(new Vec3D(0, -val / 100000.0, 0))));
+        JSlider intensitySlider = new JSlider(10, 5000, 1000);
+        intensitySlider.setSnapToTicks(true);
+        intensitySlider.setMajorTickSpacing(10);
+        JLabel intensityLabel = new JLabel("  1000");
+        intensitySlider.addChangeListener(e -> {
+            int val = (intensitySlider.getValue() / 10) * 10;
+            intensityLabel.setText("  " + val);
+            snow.setMaxParticles(val);
+        });
+        snowPanel.add(createSliderRow("Intensity:", intensitySlider, intensityLabel));
+
+        JSlider gravitySlider = new JSlider(0, 100, 5);
+        JLabel gravityLabel = new JLabel("  0.05");
+        gravitySlider.addChangeListener(e -> {
+            gravityLabel.setText(String.format("  %.2f", gravitySlider.getValue() / 100.0f));
+            snow.setGravity(new Vec3D(0, -gravitySlider.getValue() / 100000.0, 0));
+        });
+        snowPanel.add(createSliderRow("Gravity:", gravitySlider, gravityLabel));
+
+        JSlider lifetimeSlider = new JSlider(1000, 60000, 30000);
+        JLabel lifetimeLabel = new JLabel("  30000");
+        lifetimeSlider.addChangeListener(e -> {
+            lifetimeLabel.setText("  " + lifetimeSlider.getValue());
+            snow.setMaxLifetime(lifetimeSlider.getValue());
+        });
+        snowPanel.add(createSliderRow("Lifetime:", lifetimeSlider, lifetimeLabel));
+
         mainPanel.add(snowPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
         // Wind
         JPanel windPanel = createSectionPanel("Wind");
-        windPanel.add(createSliderRow("Wind X:", -100, 100, 0, 100.0f,
-                val -> snow.setWind(new Vec3D(val / 10000.0, snow.getWind().getY(), snow.getWind().getZ()))));
-        windPanel.add(createSliderRow("Wind Z:", -100, 100, 0, 100.0f,
-                val -> snow.setWind(new Vec3D(snow.getWind().getX(), snow.getWind().getY(), val / 10000.0))));
+
+        JSlider windXSlider = new JSlider(-100, 100, 0);
+        JLabel windXLabel = new JLabel("  0.00");
+        windXSlider.addChangeListener(e -> {
+            windXLabel.setText(String.format("  %.2f", windXSlider.getValue() / 100.0f));
+            snow.setWind(new Vec3D(windXSlider.getValue() / 10000.0, snow.getWind().getY(), snow.getWind().getZ()));
+        });
+        windPanel.add(createSliderRow("Wind X:", windXSlider, windXLabel));
+
+        JSlider windZSlider = new JSlider(-100, 100, 0);
+        JLabel windZLabel = new JLabel("  0.00");
+        windZSlider.addChangeListener(e -> {
+            windZLabel.setText(String.format("  %.2f", windZSlider.getValue() / 100.0f));
+            snow.setWind(new Vec3D(snow.getWind().getX(), snow.getWind().getY(), windZSlider.getValue() / 10000.0));
+        });
+        windPanel.add(createSliderRow("Wind Z:", windZSlider, windZLabel));
+
         mainPanel.add(windPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
         // Lighting
         JPanel lightingPanel = createSectionPanel("Lighting");
-        lightingPanel.add(createSliderRow("Intensity:", 0, 20, 10, 10.0f,
-                val -> lighting.setIntensity(val / 10.0f)));
+
+        JSlider lightIntSlider = new JSlider(0, 20, 10);
+        JLabel lightIntLabel = new JLabel("  1.00");
+        lightIntSlider.addChangeListener(e -> {
+            lightIntLabel.setText(String.format("  %.2f", lightIntSlider.getValue() / 10.0f));
+            lighting.setIntensity(lightIntSlider.getValue() / 10.0f);
+        });
+        lightingPanel.add(createSliderRow("Intensity:", lightIntSlider, lightIntLabel));
 
         // Light R, G, B sliders
         JSlider rSlider = new JSlider(0, 255, 204);
         JSlider gSlider = new JSlider(0, 255, 217);
         JSlider bSlider = new JSlider(0, 255, 230);
+        JLabel rLabel = new JLabel("  204");
+        JLabel gLabel = new JLabel("  217");
+        JLabel bLabel = new JLabel("  230");
 
         Runnable updateColor = () -> lighting.setDiffuseColor(
                 rSlider.getValue() / 255.0f,
                 gSlider.getValue() / 255.0f,
                 bSlider.getValue() / 255.0f);
 
-        lightingPanel.add(createColorSliderRow("Red:", rSlider, updateColor));
-        lightingPanel.add(createColorSliderRow("Green:", gSlider, updateColor));
-        lightingPanel.add(createColorSliderRow("Blue:", bSlider, updateColor));
+        rSlider.addChangeListener(e -> { rLabel.setText("  " + rSlider.getValue()); updateColor.run(); });
+        gSlider.addChangeListener(e -> { gLabel.setText("  " + gSlider.getValue()); updateColor.run(); });
+        bSlider.addChangeListener(e -> { bLabel.setText("  " + bSlider.getValue()); updateColor.run(); });
+
+        lightingPanel.add(createSliderRow("Red:", rSlider, rLabel));
+        lightingPanel.add(createSliderRow("Green:", gSlider, gLabel));
+        lightingPanel.add(createSliderRow("Blue:", bSlider, bLabel));
 
         // Light position
-        lightingPanel.add(createSliderRow("Position X:", -50, 50, 10, 1.0f,
-                val -> lighting.setLightPosition(val, lighting.getLightPosition()[1], lighting.getLightPosition()[2])));
-        lightingPanel.add(createSliderRow("Position Y:", -50, 50, 20, 1.0f,
-                val -> lighting.setLightPosition(lighting.getLightPosition()[0], val, lighting.getLightPosition()[2])));
-        lightingPanel.add(createSliderRow("Position Z:", -50, 50, 10, 1.0f,
-                val -> lighting.setLightPosition(lighting.getLightPosition()[0], lighting.getLightPosition()[1], val)));
+        JSlider posXSlider = new JSlider(-50, 50, 10);
+        JLabel posXLabel = new JLabel("  10");
+        posXSlider.addChangeListener(e -> {
+            posXLabel.setText("  " + posXSlider.getValue());
+            lighting.setLightPosition(posXSlider.getValue(), lighting.getLightPosition()[1], lighting.getLightPosition()[2]);
+        });
+        lightingPanel.add(createSliderRow("Position X:", posXSlider, posXLabel));
+
+        JSlider posYSlider = new JSlider(-50, 50, 20);
+        JLabel posYLabel = new JLabel("  20");
+        posYSlider.addChangeListener(e -> {
+            posYLabel.setText("  " + posYSlider.getValue());
+            lighting.setLightPosition(lighting.getLightPosition()[0], posYSlider.getValue(), lighting.getLightPosition()[2]);
+        });
+        lightingPanel.add(createSliderRow("Position Y:", posYSlider, posYLabel));
+
+        JSlider posZSlider = new JSlider(-50, 50, 10);
+        JLabel posZLabel = new JLabel("  10");
+        posZSlider.addChangeListener(e -> {
+            posZLabel.setText("  " + posZSlider.getValue());
+            lighting.setLightPosition(lighting.getLightPosition()[0], lighting.getLightPosition()[1], posZSlider.getValue());
+        });
+        lightingPanel.add(createSliderRow("Position Z:", posZSlider, posZLabel));
 
         mainPanel.add(lightingPanel);
 
@@ -84,50 +150,13 @@ public class ControlPanel extends JFrame {
         return panel;
     }
 
-    private JPanel createSliderRow(String labelText, int min, int max, int initialValue, float scale,
-                                   java.util.function.IntConsumer callback) {
+    private JPanel createSliderRow(String labelText, JSlider slider, JLabel valueLabel) {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 5));
 
         JLabel nameLabel = new JLabel(labelText);
         nameLabel.setPreferredSize(new Dimension(80, 25));
-
-        JSlider slider = new JSlider(min, max, initialValue);
         slider.setPreferredSize(new Dimension(150, 25));
-
-        String initialStr = (scale == 1.0f) ? String.valueOf(initialValue) : String.format("%.2f", initialValue / scale);
-        JLabel valueLabel = new JLabel("  " + initialStr);
         valueLabel.setPreferredSize(new Dimension(50, 25));
-
-        slider.addChangeListener(e -> {
-            if (scale == 1.0f) {
-                valueLabel.setText("  " + slider.getValue());
-            } else {
-                valueLabel.setText(String.format("  %.2f", slider.getValue() / scale));
-            }
-            callback.accept(slider.getValue());
-        });
-
-        row.add(nameLabel);
-        row.add(slider);
-        row.add(valueLabel);
-        return row;
-    }
-
-    private JPanel createColorSliderRow(String labelText, JSlider slider, Runnable onChanged) {
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 5));
-
-        JLabel nameLabel = new JLabel(labelText);
-        nameLabel.setPreferredSize(new Dimension(80, 25));
-
-        slider.setPreferredSize(new Dimension(150, 25));
-
-        JLabel valueLabel = new JLabel("  " + slider.getValue());
-        valueLabel.setPreferredSize(new Dimension(50, 25));
-
-        slider.addChangeListener(e -> {
-            valueLabel.setText("  " + slider.getValue());
-            onChanged.run();
-        });
 
         row.add(nameLabel);
         row.add(slider);

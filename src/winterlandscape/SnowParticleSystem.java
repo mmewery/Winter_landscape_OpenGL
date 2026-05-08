@@ -15,9 +15,10 @@ public class SnowParticleSystem {
     private final List<SnowParticle> particles = new ArrayList<>();
     private final Random random = new Random();
 
-    private int maxParticles = 1000000;
+    private int maxParticles = 10000;
     private Vec3D gravity = new Vec3D(0, -0.00005, 0);
     private Vec3D wind = new Vec3D(0, 0, 0);
+    private int maxLifetime = 30000;
 
     private final float spawnAreaSize = 20f;
 
@@ -47,11 +48,25 @@ public class SnowParticleSystem {
         this.gravity = gravity;
     }
 
-//    public void init(){
-//        for(int i = 0; i < 1000; i++){
-//            spawnParticle();
-//        }
-//    }
+    public int getParticleCount() {
+        return particles.size();
+    }
+
+    public int getMaxParticles() {
+        return maxParticles;
+    }
+
+    public void setMaxLifetime(int lifetime) {
+        this.maxLifetime = lifetime;
+    }
+
+
+    private static final float WALL_HALF = 2.5f;
+    private static final float WALL_TOP = 5.0f;
+    private static final float ROOF_BASE_Y = 5.0f;
+    private static final float ROOF_PEAK_Y = 7.5f;
+    private static final float ROOF_HALF_WIDTH = 2.5f;
+    private static final float ROOF_HALF_DEPTH = 2.5f;
 
     public void update() {
 
@@ -59,23 +74,77 @@ public class SnowParticleSystem {
             spawnParticle();
         }
         for(SnowParticle particle:particles){
-            particle.velocity = particle.velocity.add(gravity);
-            particle.position = particle.position.add(particle.velocity);
-            particle.lifetime += 5;
-
-            if (particle.position.getY() <= 5.1f && particle.position.getY() > 1.0f &&
-                particle.position.getX() <= 2.5f && particle.position.getX() >= -2.5f &&
-                particle.position.getZ() <= 2.5f && particle.position.getZ() >= -2.5f) {
-                
-                particle.position = particle.position.withY(5.1f);
-                particle.velocity = new Vec3D(0, 0, 0);
-                
-            } else if (particle.position.getY() <= 0.3f) {
-                particle.position = particle.position.withY(0.1f);
-                particle.velocity = new Vec3D(0, 0, 0);
+            if (particle.grounded) {
+                particle.lifetime += 5;
+                if (particle.lifetime >= maxLifetime) {
+                    deleteParticle(particle);
+                }
+                continue;
             }
 
-            if (particle.lifetime >= 30000) {
+            particle.velocity = particle.velocity.add(gravity);
+            particle.position = particle.position.add(particle.velocity).add(wind);
+            particle.lifetime += 5;
+
+            double px = particle.position.getX();
+            double py = particle.position.getY();
+            double pz = particle.position.getZ();
+
+            boolean inXRange = px >= -WALL_HALF && px <= WALL_HALF;
+            boolean inZRange = pz >= -ROOF_HALF_DEPTH && pz <= ROOF_HALF_DEPTH;
+
+            // roof collision
+            if (inXRange && inZRange && py > ROOF_BASE_Y) {
+
+                double roofY = ROOF_BASE_Y + (ROOF_PEAK_Y - ROOF_BASE_Y) * (1.0 - Math.abs(px) / ROOF_HALF_WIDTH);
+                if (py <= roofY) {
+                    particle.position = particle.position.withY(roofY + 0.05);
+                    particle.velocity = new Vec3D(0, 0, 0);
+                    particle.grounded = true;
+                    continue;
+                }
+            }
+
+            // wall collision
+            if (py > 0 && py <= WALL_TOP) {
+                // Front
+                if (inXRange && pz <= WALL_HALF && pz >= WALL_HALF - 0.3 && particle.velocity.getZ() < 0) {
+                    particle.position = particle.position.withZ(WALL_HALF + 0.05);
+                    particle.velocity = new Vec3D(0, 0, 0);
+                    particle.grounded = true;
+                    continue;
+                }
+                // Back
+                if (inXRange && pz >= -WALL_HALF && pz <= -WALL_HALF + 0.3 && particle.velocity.getZ() > 0) {
+                    particle.position = particle.position.withZ(-WALL_HALF - 0.05);
+                    particle.velocity = new Vec3D(0, 0, 0);
+                    particle.grounded = true;
+                    continue;
+                }
+                // Right
+                if (inZRange && px <= WALL_HALF && px >= WALL_HALF - 0.3 && particle.velocity.getX() < 0) {
+                    particle.position = particle.position.withX(WALL_HALF + 0.05);
+                    particle.velocity = new Vec3D(0, 0, 0);
+                    particle.grounded = true;
+                    continue;
+                }
+                // left
+                if (inZRange && px >= -WALL_HALF && px <= -WALL_HALF + 0.3 && particle.velocity.getX() > 0) {
+                    particle.position = particle.position.withX(-WALL_HALF - 0.05);
+                    particle.velocity = new Vec3D(0, 0, 0);
+                    particle.grounded = true;
+                    continue;
+                }
+            }
+
+            // Ground
+            if (py <= 0.1) {
+                particle.position = particle.position.withY(0.1);
+                particle.velocity = new Vec3D(0, 0, 0);
+                particle.grounded = true;
+            }
+
+            if (particle.lifetime >= maxLifetime) {
                 deleteParticle(particle);
             }
         }
@@ -90,6 +159,7 @@ public class SnowParticleSystem {
         particle.position = new Vec3D(x, y, z);
         particle.lifetime = 0;
         particle.velocity = new Vec3D(0, velocityY, 0);
+        particle.grounded = false;
 
     }
 
