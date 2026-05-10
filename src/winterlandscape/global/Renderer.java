@@ -61,6 +61,7 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         terrain.init();
 
         snow = new SnowParticleSystem();
+        snow.init();
 
         house = new House();
         house.init();
@@ -94,12 +95,10 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         snow.update();
         snow.render();
 
-        textRenderer.clear();
         textRenderer.addStr2D(3, 20, "Snow: " + snow.getParticleCount() + " / " + snow.getMaxParticles());
         textRenderer.addStr2D(3, 40, String.format("Wind: (%.4f, %.4f)", snow.getWind().getX(), snow.getWind().getZ()));
         textRenderer.addStr2D(3, 60, String.format("Light: %.1f", lighting.getIntensity()));
         textRenderer.addStr2D(3, height - 3, "WASD=move | Mouse=look | Scroll=zoom");
-        textRenderer.draw();
     }
 
 

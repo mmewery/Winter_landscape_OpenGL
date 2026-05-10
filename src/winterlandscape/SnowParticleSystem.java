@@ -1,13 +1,14 @@
 package winterlandscape;
 
+import lwjglutils.OGLTexture2D;
 import transforms.Vec3D;
 import winterlandscape.solids.SnowParticle;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.*;
 
 public class SnowParticleSystem {
@@ -19,8 +20,17 @@ public class SnowParticleSystem {
     private Vec3D gravity = new Vec3D(0, -0.00005, 0);
     private Vec3D wind = new Vec3D(0, 0, 0);
     private int maxLifetime = 30000;
-
     private final float spawnAreaSize = 30f;
+
+    private OGLTexture2D snowTexture;
+
+    public void init() {
+        try {
+            snowTexture = new OGLTexture2D("textures/img.png");
+        } catch (IOException e) {
+            System.err.println("Error loading snow texture: " + e.getMessage());
+        }
+    }
 
     private void spawnParticle() {
         float x =  random.nextFloat(-spawnAreaSize, spawnAreaSize);
@@ -34,7 +44,6 @@ public class SnowParticleSystem {
     public void setMaxParticles(int count) {
         this.maxParticles = count;
     }
-
 
     public void setWind(Vec3D wind) {
         this.wind = wind;
@@ -99,7 +108,6 @@ public class SnowParticleSystem {
 
             // roof collision
             if (inXRange && inZRange && py > ROOF_BASE_Y) {
-
                 double roofY = ROOF_BASE_Y + (ROOF_PEAK_Y - ROOF_BASE_Y) * (1.0 - Math.abs(px) / ROOF_HALF_WIDTH);
                 if (py <= roofY) {
                     particle.position = particle.position.withY(roofY + 0.05);
@@ -111,25 +119,21 @@ public class SnowParticleSystem {
 
             // wall collision
             if (py > 0 && py <= WALL_TOP) {
-                // Front
                 if (inXRange && pz <= WALL_HALF && pz >= WALL_HALF - 0.3) {
                     particle.position = particle.position.withZ(WALL_HALF + 0.05);
                     particle.velocity = new Vec3D(0, particle.velocity.getY(), 0);
                     particle.wallHit = true;
                 }
-                // Back
                 if (inXRange && pz >= -WALL_HALF && pz <= -WALL_HALF + 0.3) {
                     particle.position = particle.position.withZ(-WALL_HALF - 0.05);
                     particle.velocity = new Vec3D(0, particle.velocity.getY(), 0);
                     particle.wallHit = true;
                 }
-                // Right
                 if (inZRange && px <= WALL_HALF && px >= WALL_HALF - 0.3) {
                     particle.position = particle.position.withX(WALL_HALF + 0.05);
                     particle.velocity = new Vec3D(0, particle.velocity.getY(), 0);
                     particle.wallHit = true;
                 }
-                // left
                 if (inZRange && px >= -WALL_HALF && px <= -WALL_HALF + 0.3) {
                     particle.position = particle.position.withX(-WALL_HALF - 0.05);
                     particle.velocity = new Vec3D(0, particle.velocity.getY(), 0);
@@ -165,28 +169,53 @@ public class SnowParticleSystem {
         particle.velocity = new Vec3D(0, velocityY, 0);
         particle.grounded = false;
         particle.wallHit = false;
-
     }
 
     public void render() {
+        float[] mv = new float[16];
+        glGetFloatv(GL_MODELVIEW_MATRIX, mv);
+
+        float rx = mv[0], ry = mv[4], rz = mv[8];
+        float ux = mv[1], uy = mv[5], uz = mv[9];
 
         glDisable(GL_LIGHTING);
-        glEnable(GL_POINT_SMOOTH);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor3f(1, 1, 1);
-        glPointSize(30);
+        glEnable(GL_TEXTURE_2D);
+        glDepthMask(false);
 
-        float[] attenuation = {0f, 0.1f, 0.01f};
-        glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, attenuation);
-        glBegin(GL_POINTS);
+        if (snowTexture != null) {
+            snowTexture.bind();
+        }
+
+        glColor4f(1, 1, 1, 0.9f);
+
+        float size = 0.15f;
+
+
+        glBegin(GL_QUADS);
         for(SnowParticle particle:particles){
-            glVertex3d(particle.position.getX(), particle.position.getY(), particle.position.getZ());
+            float px = (float) particle.position.getX();
+            float py = (float) particle.position.getY();
+            float pz = (float) particle.position.getZ();
+
+            glTexCoord2f(0, 0);
+            glVertex3f(px - (rx + ux) * size, py - (ry + uy) * size, pz - (rz + uz) * size);
+
+            glTexCoord2f(1, 0);
+            glVertex3f(px + (rx - ux) * size, py + (ry - uy) * size, pz + (rz - uz) * size);
+
+            glTexCoord2f(1, 1);
+            glVertex3f(px + (rx + ux) * size, py + (ry + uy) * size, pz + (rz + uz) * size);
+
+            glTexCoord2f(0, 1);
+            glVertex3f(px - (rx - ux) * size, py - (ry - uy) * size, pz - (rz - uz) * size);
         }
         glEnd();
+
+        glDepthMask(true);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
         glEnable(GL_LIGHTING);
-
-
     }
-
 }
