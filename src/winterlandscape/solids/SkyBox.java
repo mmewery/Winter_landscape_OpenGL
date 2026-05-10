@@ -115,8 +115,4 @@ public class SkyBox {
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_TEXTURE_2D);
     }
-
-    public void dispose() {
-        // TODO: Clean up texture resources
-    }
 }

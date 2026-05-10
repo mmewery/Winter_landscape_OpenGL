@@ -175,8 +175,8 @@ public class SnowParticleSystem {
         float[] mv = new float[16];
         glGetFloatv(GL_MODELVIEW_MATRIX, mv);
 
-        float rx = mv[0], ry = mv[4], rz = mv[8];
-        float ux = mv[1], uy = mv[5], uz = mv[9];
+        Vec3D right = new Vec3D(mv[0], mv[4], mv[8]);
+        Vec3D up = new Vec3D(mv[1], mv[5], mv[9]);
 
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
@@ -191,25 +191,28 @@ public class SnowParticleSystem {
         glColor4f(1, 1, 1, 0.9f);
 
         float size = 0.15f;
-
+        Vec3D rightS = right.mul(size);
+        Vec3D upS = up.mul(size);
 
         glBegin(GL_QUADS);
         for(SnowParticle particle:particles){
-            float px = (float) particle.position.getX();
-            float py = (float) particle.position.getY();
-            float pz = (float) particle.position.getZ();
+            Vec3D pos = particle.position;
 
+            Vec3D v1 = pos.sub(rightS).sub(upS);
             glTexCoord2f(0, 0);
-            glVertex3f(px - (rx + ux) * size, py - (ry + uy) * size, pz - (rz + uz) * size);
+            glVertex3d(v1.getX(), v1.getY(), v1.getZ());
 
+            Vec3D v2 = pos.add(rightS).sub(upS);
             glTexCoord2f(1, 0);
-            glVertex3f(px + (rx - ux) * size, py + (ry - uy) * size, pz + (rz - uz) * size);
+            glVertex3d(v2.getX(), v2.getY(), v2.getZ());
 
+            Vec3D v3 = pos.add(rightS).add(upS);
             glTexCoord2f(1, 1);
-            glVertex3f(px + (rx + ux) * size, py + (ry + uy) * size, pz + (rz + uz) * size);
+            glVertex3d(v3.getX(), v3.getY(), v3.getZ());
 
+            Vec3D v4 = pos.sub(rightS).add(upS);
             glTexCoord2f(0, 1);
-            glVertex3f(px - (rx - ux) * size, py - (ry - uy) * size, pz - (rz - uz) * size);
+            glVertex3d(v4.getX(), v4.getY(), v4.getZ());
         }
         glEnd();
 

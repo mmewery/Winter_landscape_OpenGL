@@ -5,7 +5,7 @@ import winterlandscape.global.Renderer;
 
 public class App {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         new LwjglWindow(new Renderer());
     }
 }

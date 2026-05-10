@@ -1,11 +1,11 @@
 package winterlandscape;
 
+import transforms.Col;
 import transforms.Vec3D;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-
 
 public class ControlPanel extends JFrame {
 
@@ -99,14 +99,23 @@ public class ControlPanel extends JFrame {
         JLabel gLabel = new JLabel("  217");
         JLabel bLabel = new JLabel("  230");
 
-        Runnable updateColor = () -> lighting.setDiffuseColor(
-                rSlider.getValue() / 255.0f,
-                gSlider.getValue() / 255.0f,
-                bSlider.getValue() / 255.0f);
+        Runnable updateColor = () -> lighting.setDiffuseColor(new Col(
+                rSlider.getValue() / 255.0,
+                gSlider.getValue() / 255.0,
+                bSlider.getValue() / 255.0));
 
-        rSlider.addChangeListener(e -> { rLabel.setText("  " + rSlider.getValue()); updateColor.run(); });
-        gSlider.addChangeListener(e -> { gLabel.setText("  " + gSlider.getValue()); updateColor.run(); });
-        bSlider.addChangeListener(e -> { bLabel.setText("  " + bSlider.getValue()); updateColor.run(); });
+        rSlider.addChangeListener(e -> {
+            rLabel.setText("  " + rSlider.getValue());
+            updateColor.run();
+        });
+        gSlider.addChangeListener(e -> {
+            gLabel.setText("  " + gSlider.getValue());
+            updateColor.run();
+        });
+        bSlider.addChangeListener(e -> {
+            bLabel.setText("  " + bSlider.getValue());
+            updateColor.run();
+        });
 
         lightingPanel.add(createSliderRow("Red:", rSlider, rLabel));
         lightingPanel.add(createSliderRow("Green:", gSlider, gLabel));
@@ -117,7 +126,8 @@ public class ControlPanel extends JFrame {
         JLabel posXLabel = new JLabel("  10");
         posXSlider.addChangeListener(e -> {
             posXLabel.setText("  " + posXSlider.getValue());
-            lighting.setLightPosition(posXSlider.getValue(), lighting.getLightPosition()[1], lighting.getLightPosition()[2]);
+            Vec3D pos = lighting.getLightPosition();
+            lighting.setLightPosition(new Vec3D(posXSlider.getValue(), pos.getY(), pos.getZ()));
         });
         lightingPanel.add(createSliderRow("Position X:", posXSlider, posXLabel));
 
@@ -125,7 +135,8 @@ public class ControlPanel extends JFrame {
         JLabel posYLabel = new JLabel("  20");
         posYSlider.addChangeListener(e -> {
             posYLabel.setText("  " + posYSlider.getValue());
-            lighting.setLightPosition(lighting.getLightPosition()[0], posYSlider.getValue(), lighting.getLightPosition()[2]);
+            Vec3D pos = lighting.getLightPosition();
+            lighting.setLightPosition(new Vec3D(pos.getX(), posYSlider.getValue(), pos.getZ()));
         });
         lightingPanel.add(createSliderRow("Position Y:", posYSlider, posYLabel));
 
@@ -133,7 +144,8 @@ public class ControlPanel extends JFrame {
         JLabel posZLabel = new JLabel("  10");
         posZSlider.addChangeListener(e -> {
             posZLabel.setText("  " + posZSlider.getValue());
-            lighting.setLightPosition(lighting.getLightPosition()[0], lighting.getLightPosition()[1], posZSlider.getValue());
+            Vec3D pos = lighting.getLightPosition();
+            lighting.setLightPosition(new Vec3D(pos.getX(), pos.getY(), posZSlider.getValue()));
         });
         lightingPanel.add(createSliderRow("Position Z:", posZSlider, posZLabel));
 
