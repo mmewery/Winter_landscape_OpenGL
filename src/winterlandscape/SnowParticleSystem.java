@@ -79,6 +79,10 @@ public class SnowParticleSystem {
 
     public void update() {
 
+        if (particles.size() > maxParticles) {
+            particles.subList(maxParticles, particles.size()).clear();
+        }
+
         if(particles.size() < maxParticles) {
             spawnParticle();
         }
