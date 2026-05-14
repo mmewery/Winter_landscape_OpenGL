@@ -95,10 +95,15 @@ public class Renderer extends winterlandscape.global.AbstractRenderer {
         snow.update();
         snow.render();
 
-        textRenderer.addStr2D(3, 20, "Snow: " + snow.getParticleCount() + " / " + snow.getMaxParticles());
-        textRenderer.addStr2D(3, 40, String.format("Wind: (%.4f, %.4f)", snow.getWind().getX(), snow.getWind().getZ()));
-        textRenderer.addStr2D(3, 60, String.format("Light: %.1f", lighting.getIntensity()));
-        textRenderer.addStr2D(3, height - 3, "WASD=move | Mouse=look | Scroll=zoom");
+        textRenderer.addStr2D(3, 20, "Projekt: Zimní krajina");
+        textRenderer.addStr2D(3, 40, "Student: Maria Maslova, masloma2");
+        textRenderer.addStr2D(3, 60, "Predmet: PGRF2");
+        textRenderer.addStr2D(3, 80, "Datum odevzdani: 10.05.2026");
+
+        textRenderer.addStr2D(3, 100, "Snow: " + snow.getParticleCount() + " / " + snow.getMaxParticles());
+        textRenderer.addStr2D(3, 120, String.format("Wind: (%.4f, %.4f)", snow.getWind().getX(), snow.getWind().getZ()));
+        textRenderer.addStr2D(3, 140, String.format("Light: %.1f", lighting.getIntensity()));
+        textRenderer.addStr2D(3, height - 3, "Ovladani: WASD=pohyb | Mys=rozhled | Scroll=priblizeni");
     }
 
 
