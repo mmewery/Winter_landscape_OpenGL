@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 import transforms.Vec3D;
 import winterlandscape.*;
 import winterlandscape.solids.House;
+import winterlandscape.solids.SceneLighting;
 import winterlandscape.solids.SkyBox;
 import winterlandscape.solids.TerrainPlane;
 

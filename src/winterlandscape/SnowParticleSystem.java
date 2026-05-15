@@ -1,6 +1,7 @@
 package winterlandscape;
 
 import lwjglutils.OGLTexture2D;
+import transforms.Mat4;
 import transforms.Vec3D;
 import winterlandscape.solids.SnowParticle;
 
@@ -176,11 +177,13 @@ public class SnowParticleSystem {
     }
 
     public void render() {
-        float[] mv = new float[16];
-        glGetFloatv(GL_MODELVIEW_MATRIX, mv);
+        double[] mv = new double[16];
+        glGetDoublev(GL_MODELVIEW_MATRIX, mv);
 
-        Vec3D right = new Vec3D(mv[0], mv[4], mv[8]);
-        Vec3D up = new Vec3D(mv[1], mv[5], mv[9]);
+        Mat4 modelViewMatrix = new Mat4(mv);
+
+        Vec3D right = new Vec3D(modelViewMatrix.getColumn(0));
+        Vec3D up = new Vec3D(modelViewMatrix.getColumn(1));
 
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
@@ -192,7 +195,7 @@ public class SnowParticleSystem {
             snowTexture.bind();
         }
 
-        glColor4f(1, 1, 1, 0.9f);
+        glColor4d(1, 1, 1, 0.9);
 
         float size = 0.15f;
         Vec3D rightS = right.mul(size);

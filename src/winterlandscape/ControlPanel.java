@@ -2,6 +2,7 @@ package winterlandscape;
 
 import transforms.Col;
 import transforms.Vec3D;
+import winterlandscape.solids.SceneLighting;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -32,7 +33,7 @@ public class ControlPanel extends JFrame {
         intensitySlider.setMajorTickSpacing(10);
         JLabel intensityLabel = new JLabel("  1000");
         intensitySlider.addChangeListener(e -> {
-            int val = (intensitySlider.getValue() / 10) * 10;
+            int val = intensitySlider.getValue();
             intensityLabel.setText("  " + val);
             snow.setMaxParticles(val);
         });
@@ -42,7 +43,7 @@ public class ControlPanel extends JFrame {
         JSlider gravitySlider = new JSlider(0, 100, 5);
         JLabel gravityLabel = new JLabel("  0.05");
         gravitySlider.addChangeListener(e -> {
-            gravityLabel.setText(String.format("  %.2f", gravitySlider.getValue() / 100.0f));
+            gravityLabel.setText(String.format("  %.2f", gravitySlider.getValue() / 100.0));
             snow.setGravity(new Vec3D(0, -gravitySlider.getValue() / 100000.0, 0));
         });
         snowPanel.add(createSliderRow("Gravity:", gravitySlider, gravityLabel));

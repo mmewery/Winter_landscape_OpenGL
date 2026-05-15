@@ -1,4 +1,4 @@
-package winterlandscape;
+package winterlandscape.solids;
 
 import transforms.Col;
 import transforms.Vec3D;
